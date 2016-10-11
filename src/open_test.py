@@ -16,37 +16,47 @@ len_training=int((len(filelist)*0.8))
 training_list=filelist[:len_training]
 test_list=filelist[len_training:]
 
+def y_vector(position):
+	y=np.zeros((4,1))
+	y[position]=1.0
+	return y
 
-training_input=list()
+training_input=[]
 for fname in training_list:
 	img=Image.open(fname)
 	if "up" in fname:
-		training_input.append((list(img.getdata()),list([[1],[0],[0],[0]])))
+		imgdata=np.asarray(list(img.getdata()))
+		training_input.append((np.reshape(imgdata,(960,1)),y_vector(0)))
 	elif "straight" in fname:
-		training_input.append((list(img.getdata()),list([0],[1],[0],[0])))
+		imgdata=np.asarray(list(img.getdata()))
+		training_input.append((np.reshape(imgdata,(960,1)),y_vector(1)))
 	elif "left" in fname:
-		training_input.append((list(img.getdata()),list([[0],[0],[1],[0]])))
+		imgdata=np.asarray(list(img.getdata()))
+		training_input.append((np.reshape(imgdata,(960,1)),y_vector(2)))
 	elif "right" in fname:
-		training_input.append((list(img.getdata()),list([[0],[0],[0],[1]])))
+		imgdata=np.asarray(list(img.getdata()))
+		training_input.append((np.reshape(imgdata,(960,1)),y_vector(3)))
 	else:
 		print "Something wrong with a file name"
 
-test_input=list()
+test_input=[]
 for fname in test_list:
 	img=Image.open(fname)
 	if "up" in fname:
-		test_input.append((list(img.getdata()),array([[1],[0],[0],[0]])))
+		imgdata=np.asarray(list(img.getdata()))
+		test_input.append((np.reshape(imgdata,(960,1)),0))
 	elif "straight" in fname:
-		test_input.append((list(img.getdata()),list([[0],[1],[0],[0]])))
+		imgdata=np.asarray(list(img.getdata()))
+		test_input.append((np.reshape(imgdata,(960,1)),1))
 	elif "left" in fname:
-		test_input.append((list(img.getdata()),list([[0],[0],[1],[0]])))
+		imgdata=np.asarray(list(img.getdata()))
+		test_input.append((np.reshape(imgdata,(960,1)),2))
 	elif "right" in fname:
-		test_input.append((list(img.getdata()),list([[0],[0],[0],[1]])))
+		imgdata=np.asarray(list(img.getdata()))
+		test_input.append((np.reshape(imgdata,(960,1)),3))
 	else:
 		print "Something wrong with a file name"
 
 
-for i in test_input:
-	print i
-#neural_net=network.Network([960,30,4])
-#neural_net.SGD(training_input,10,100,5,test_input)
+neural_net=network.Network([960,30,4])
+neural_net.SGD(training_input,30,10,0.1,test_input)
